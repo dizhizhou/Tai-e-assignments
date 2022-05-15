@@ -82,6 +82,19 @@ public abstract class Solver<Node, Fact> {
 
     protected void initializeBackward(CFG<Node> cfg, DataflowResult<Node, Fact> result) {
         // TODO - finish me
+        // IN[exit] = {empty},
+        // Note: also need to init out otherwise the getOutFact will return null in doSolveBackward
+        result.setInFact(cfg.getExit(), analysis.newBoundaryFact(cfg));
+        result.setOutFact(cfg.getExit(), analysis.newBoundaryFact(cfg));
+
+        // for(each node in CFG except exit)
+        for (Node node : cfg) {
+            if (cfg.isExit(node)) {
+                continue;
+            }
+            result.setInFact(node, analysis.newInitialFact());
+            result.setOutFact(node, analysis.newInitialFact());
+        }
     }
 
     /**
